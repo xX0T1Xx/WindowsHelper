@@ -1,6 +1,8 @@
 #include "WindowsHelper.h"
+#include <stdio.h>
 
-void onButton(void) {
+void onButton(int ElementID) {
+    printf("%d\n", ElementID);
     HelperSetElementText(0, "This is the NEW TEXT");
 }
 

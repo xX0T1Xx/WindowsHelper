@@ -5,7 +5,7 @@ WNDCLASSA WC = {0};
 char CLASS_NAME[50] = {0};
 HWND WINDOW_HANDLE = 0;
 int ID_COUNTER = -1;
-std::vector<void(*)(void)> FUNCTION_POINTER_ID;
+std::vector<void(*)(int)> FUNCTION_POINTER_ID;
 std::vector<HWND> ELEMENTS;
 
 // ---------------------------------------------------------------------------------------------------------- //
@@ -51,8 +51,7 @@ void HelperStartWindow(void) {
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
         case WM_COMMAND: // The Element Was Clicked
-            printf("wParam: %d, lParam: %d\n", wParam, lParam);
-            FUNCTION_POINTER_ID.at((int)wParam)(); // Call the function associated with this element
+            FUNCTION_POINTER_ID.at((int)wParam)((int)wParam); // Call the function associated with this element
             break;
 
         case WM_DESTROY: // X Button Clicked
@@ -63,7 +62,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 }
 
 // This is the None function, it's required by WindowProc
-void None(void) {
+void None(int ElementID) {
     return;
 }
 
@@ -73,7 +72,7 @@ void None(void) {
 // ---------------------------------------------------------------------------------------------------------- //
 
 // Creates a button and returns it's id
-int HelperCreateButton(const char *ButtonText, const uint32_t x, const uint32_t y, void(*function)(void)) {
+int HelperCreateButton(const char *ButtonText, const uint32_t x, const uint32_t y, void(*function)(int)) {
     ID_COUNTER++;
     FUNCTION_POINTER_ID.push_back(function);
     HWND button = CreateWindowA(
@@ -87,7 +86,7 @@ int HelperCreateButton(const char *ButtonText, const uint32_t x, const uint32_t 
 }
 
 // Creates a button and returns it's id
-int HelperCreateLabel(const char *LabelText, const uint32_t x, const uint32_t y, void(*function)(void)) {
+int HelperCreateLabel(const char *LabelText, const uint32_t x, const uint32_t y, void(*function)(int)) {
     ID_COUNTER++;
     FUNCTION_POINTER_ID.push_back(function);
     HWND label = CreateWindowA(
