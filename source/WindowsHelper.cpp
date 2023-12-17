@@ -134,6 +134,20 @@ int HelperCreateLabel(const char *LabelText, const int x, const int y, const int
     return ID_COUNTER;
 }
 
+// Creates a textbox and returns it's ID
+int HelperCreateTextBox(const int x, const int y, const int width, const int height, void(*function)(int)) {
+    ID_COUNTER++;
+    FUNCTION_POINTER_ID.push_back(function);
+    HWND textbox = CreateWindowA(
+        "EDIT", "", // Class + Text
+        WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL, // Styles
+        x, y, width, height, // Position + Size
+        WINDOW_HANDLE, (HMENU)ID_COUNTER, WC.hInstance, NULL // Extra Data
+    );
+    ELEMENTS.push_back(textbox);
+    return ID_COUNTER;
+}
+
 
 // ---------------------------------------------------------------------------------------------------------- //
 //                                          ELEMENTS EDITING CODE                                             //

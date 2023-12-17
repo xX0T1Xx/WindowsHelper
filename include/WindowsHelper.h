@@ -34,6 +34,7 @@ void HelperWindowOnTop(void);
 void HelperMoveWindow(int x, int y);
 int HelperCreateButton(const char *ButtonText, const int x, const int y, const int width, const int height, void(*function)(int));
 int HelperCreateLabel(const char *LabelText, const int x, const int y, const int width, const int height, void(*function)(int));
+int HelperCreateTextBox(const int x, const int y, const int width, const int height, void(*function)(int));
 void HelperSetElementText(int ElementID, const char *Text);
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 void None(int ElementID); // This function exists if the function pointer should do nothing
