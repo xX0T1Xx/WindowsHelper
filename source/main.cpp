@@ -1,17 +1,13 @@
 #include "WindowsHelper.h"
 #include <stdio.h>
 
-void onButton(int ElementID) {
-    printf("%d\n", ElementID);
-    HelperSetElementText(0, "This is the NEW TEXT");
-}
-
 int main(void)
 {
     HelperRegisterWindow("MyWindowClass");
     HelperCreateWindow("Window Title", 500, 500);
-    HelperCreateButton("Close", 0, 0, &onButton);
-    HelperCreateLabel("This is some text", 155, 155, NONE);
+    HelperCreateButton("YEET", 250, 250, 50, 50, NONE);
+    HelperCreateLabel("YEET", 0, 0, 250, 50, NONE);
+    HelperWindowOnTop();
     HelperStartWindow();
     return 0;
 }

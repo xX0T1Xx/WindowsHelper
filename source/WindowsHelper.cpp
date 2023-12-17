@@ -7,6 +7,8 @@ HWND WINDOW_HANDLE = 0;
 int ID_COUNTER = -1;
 std::vector<void(*)(int)> FUNCTION_POINTER_ID;
 std::vector<HWND> ELEMENTS;
+HBRUSH STATIC_BRUSH = CreateSolidBrush(RGB(255, 255, 255));
+COLORREF STATIC_COLOR = RGB(0, 0, 0);
 
 // ---------------------------------------------------------------------------------------------------------- //
 //                                           WINDOW CREATION CODE                                             //
@@ -23,11 +25,21 @@ void HelperRegisterWindow(const char *ClassName) {
 }
 
 // Creates A Window
-void HelperCreateWindow(const char *WindowTitle, const uint32_t width, const uint32_t height) {
+void HelperCreateWindow(const char *WindowTitle, const int width, const int height) {
     WINDOW_HANDLE = CreateWindowExA(
         0, CLASS_NAME, WindowTitle, // Class and Title
-        WS_OVERLAPPEDWINDOW, // Style
+        WS_OVERLAPPEDWINDOW & ~WS_SIZEBOX, // Style
         CW_USEDEFAULT, CW_USEDEFAULT, width, height, // Size And Position
+        NULL, NULL, WC.hInstance, NULL // Extra
+    );
+}
+
+// Creates A Window Without Border
+void HelperCreateWindowBorderless(const char *WindowTitle, const int x, const int y, const int width, const int height) {
+    WINDOW_HANDLE = CreateWindowExA(
+        0, CLASS_NAME, WindowTitle, // Class and Title
+        WS_POPUP, // Style
+        x, y, width, height, // Size And Position
         NULL, NULL, WC.hInstance, NULL // Extra
     );
 }
@@ -47,16 +59,39 @@ void HelperStartWindow(void) {
     }
 }
 
+// Sets the window to always be on top
+void HelperWindowOnTop(void) {
+    SetWindowPos(WINDOW_HANDLE, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+}
+
+// Moves the window
+void HelperMoveWindow(int x, int y) {
+    SetWindowPos(WINDOW_HANDLE, NULL, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+}
+
 // Event Callback Function
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
-        case WM_COMMAND: // The Element Was Clicked
+
+        // The Element Was Clicked
+        case WM_COMMAND: {
             FUNCTION_POINTER_ID.at((int)wParam)((int)wParam); // Call the function associated with this element
             break;
+        }
+            
+        // Color for STATIC objects
+        case WM_CTLCOLORSTATIC: {
+            HDC hdcStatic = (HDC)wParam;
+            SetTextColor(hdcStatic, STATIC_COLOR);
+            SetBkMode(hdcStatic, TRANSPARENT);
+            return (LRESULT)STATIC_BRUSH;
+        }
 
-        case WM_DESTROY: // X Button Clicked
+        // X Button Clicked
+        case WM_DESTROY: {
             PostQuitMessage(0);
             return 0;
+        }
     }
     return DefWindowProc(hWnd, message, wParam, lParam);
 }
@@ -72,13 +107,13 @@ void None(int ElementID) {
 // ---------------------------------------------------------------------------------------------------------- //
 
 // Creates a button and returns it's id
-int HelperCreateButton(const char *ButtonText, const uint32_t x, const uint32_t y, void(*function)(int)) {
+int HelperCreateButton(const char *ButtonText, const int x, const int y, const int width, const int height, void(*function)(int)) {
     ID_COUNTER++;
     FUNCTION_POINTER_ID.push_back(function);
     HWND button = CreateWindowA(
         "BUTTON", ButtonText, // Class + Text
         WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, // Styles
-        x, y, 100, 30, // Position + Size
+        x, y, width, height, // Position + Size
         WINDOW_HANDLE, (HMENU)ID_COUNTER, WC.hInstance, NULL // Extra Data
     );
     ELEMENTS.push_back(button);
@@ -86,13 +121,13 @@ int HelperCreateButton(const char *ButtonText, const uint32_t x, const uint32_t 
 }
 
 // Creates a button and returns it's id
-int HelperCreateLabel(const char *LabelText, const uint32_t x, const uint32_t y, void(*function)(int)) {
+int HelperCreateLabel(const char *LabelText, const int x, const int y, const int width, const int height, void(*function)(int)) {
     ID_COUNTER++;
     FUNCTION_POINTER_ID.push_back(function);
     HWND label = CreateWindowA(
         "STATIC", LabelText, // Class + Text
         WS_VISIBLE | WS_CHILD, // Styles
-        x, y, 250, 15, // Position + Size
+        x, y, width, height, // Position + Size
         WINDOW_HANDLE, (HMENU)ID_COUNTER, WC.hInstance, NULL // Extra Data
     );
     ELEMENTS.push_back(label);
