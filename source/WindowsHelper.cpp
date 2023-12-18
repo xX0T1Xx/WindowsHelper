@@ -10,6 +10,7 @@ std::vector<HWND> ELEMENTS;
 HBRUSH STATIC_BRUSH = CreateSolidBrush(RGB(255, 255, 255));
 COLORREF STATIC_COLOR = RGB(0, 0, 0);
 void(*UPDATE_FUNCTION)(void) = nullptr;
+HFONT FONT = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
 
 // ---------------------------------------------------------------------------------------------------------- //
 //                                           WINDOW CREATION CODE                                             //
@@ -158,11 +159,27 @@ int HelperCreateTextBox(const int x, const int y, const int width, const int hei
 //                                          ELEMENTS EDITING CODE                                             //
 // ---------------------------------------------------------------------------------------------------------- //
 
+// Specifies the function that will be updated every interval MS
 void HelperSetUpdateFunction(void(*Function)(void), int interval) {
     SetTimer(WINDOW_HANDLE, 1, interval, NULL);
     UPDATE_FUNCTION = Function;
 }
 
+// Updates An elements text
 void HelperSetElementText(int ElementID, const char *Text) {
     SetWindowTextA(ELEMENTS.at(ElementID), Text);
+}
+
+// Changes the text color of all labels
+void HelperSetTextColor(int R, int G, int B) {
+    STATIC_COLOR = RGB(R, G, B);
+}
+
+// Sets the font size of a specific text element
+void HelperSetElementFontSize(int ElementID, int FontSize) {
+    LOGFONT lf;
+    GetObject(FONT, sizeof(LOGFONT), &lf);
+    lf.lfHeight = 24;
+    HFONT hNewFont = CreateFontIndirect(&lf);
+    SendMessage(ELEMENTS.at(ElementID), WM_SETFONT, (WPARAM)hNewFont, TRUE);
 }

@@ -25,6 +25,7 @@ extern std::vector<HWND> ELEMENTS; // Contains handle to all elements added to t
 extern HBRUSH STATIC_BRUSH; // Global brush for static elements
 extern COLORREF STATIC_COLOR; // Global text color for static elements
 extern void(*UPDATE_FUNCTION)(void); // Function that gets called every second
+extern HFONT FONT; // The GUI Font
 
 // Global Functions
 void HelperRegisterWindow(const char *ClassName);
@@ -38,6 +39,8 @@ int HelperCreateLabel(const char *LabelText, const int x, const int y, const int
 int HelperCreateTextBox(const int x, const int y, const int width, const int height, void(*function)(int));
 void HelperSetElementText(int ElementID, const char *Text);
 void HelperSetUpdateFunction(void(*Function)(void), int interval);
+void HelperSetTextColor(int R, int G, int B);
+void HelperSetElementFontSize(int ElementID, int FontSize);
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 void None(int ElementID); // This function exists if the function pointer should do nothing
 void Update(void); // This function exists as the default update function
