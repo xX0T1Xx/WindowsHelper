@@ -9,6 +9,7 @@ std::vector<void(*)(int)> FUNCTION_POINTER_ID;
 std::vector<HWND> ELEMENTS;
 HBRUSH STATIC_BRUSH = CreateSolidBrush(RGB(255, 255, 255));
 COLORREF STATIC_COLOR = RGB(0, 0, 0);
+void(*UPDATE_FUNCTION)(void) = nullptr;
 
 // ---------------------------------------------------------------------------------------------------------- //
 //                                           WINDOW CREATION CODE                                             //
@@ -78,6 +79,11 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
             FUNCTION_POINTER_ID.at((int)wParam)((int)wParam); // Call the function associated with this element
             break;
         }
+
+        // Event for our SetTimer
+        case WM_TIMER: {
+            if (wParam == 1 && UPDATE_FUNCTION != nullptr) UPDATE_FUNCTION();
+        }
             
         // Color for STATIC objects
         case WM_CTLCOLORSTATIC: {
@@ -100,7 +106,6 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 void None(int ElementID) {
     return;
 }
-
 
 // ---------------------------------------------------------------------------------------------------------- //
 //                                          ELEMENTS CREATION CODE                                            //
@@ -152,6 +157,11 @@ int HelperCreateTextBox(const int x, const int y, const int width, const int hei
 // ---------------------------------------------------------------------------------------------------------- //
 //                                          ELEMENTS EDITING CODE                                             //
 // ---------------------------------------------------------------------------------------------------------- //
+
+void HelperSetUpdateFunction(void(*Function)(void), int interval) {
+    SetTimer(WINDOW_HANDLE, 1, interval, NULL);
+    UPDATE_FUNCTION = Function;
+}
 
 void HelperSetElementText(int ElementID, const char *Text) {
     SetWindowTextA(ELEMENTS.at(ElementID), Text);
