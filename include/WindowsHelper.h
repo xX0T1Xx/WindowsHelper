@@ -26,6 +26,7 @@ extern HBRUSH STATIC_BRUSH; // Global brush for static elements
 extern COLORREF STATIC_COLOR; // Global text color for static elements
 extern void(*UPDATE_FUNCTION)(void); // Function that gets called every second
 extern HFONT FONT; // The GUI Font
+extern COLORREF BACKGROUND_COLOR; // The background color for all elements
 
 // Global Functions
 void HelperRegisterWindow(const char *ClassName);

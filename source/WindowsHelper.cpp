@@ -11,6 +11,7 @@ HBRUSH STATIC_BRUSH = CreateSolidBrush(RGB(255, 255, 255));
 COLORREF STATIC_COLOR = RGB(0, 0, 0);
 void(*UPDATE_FUNCTION)(void) = nullptr;
 HFONT FONT = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
+COLORREF BACKGROUND_COLOR = RGB(50, 50, 60);
 
 // ---------------------------------------------------------------------------------------------------------- //
 //                                           WINDOW CREATION CODE                                             //
@@ -90,8 +91,17 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
         case WM_CTLCOLORSTATIC: {
             HDC hdcStatic = (HDC)wParam;
             SetTextColor(hdcStatic, STATIC_COLOR);
-            SetBkMode(hdcStatic, TRANSPARENT);
+            SetBkColor(hdcStatic, BACKGROUND_COLOR);
             return (LRESULT)STATIC_BRUSH;
+        }
+
+        // Background Color
+        case WM_ERASEBKGND:
+        {
+            RECT rect;
+            GetClientRect(WINDOW_HANDLE, &rect);
+            FillRect((HDC)wParam, &rect, CreateSolidBrush(BACKGROUND_COLOR));
+            return 1;
         }
 
         // X Button Clicked

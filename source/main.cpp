@@ -2,9 +2,10 @@
 #include <stdio.h>
 
 int labelID;
+int labelID2;
 int counter = 0;
 
-void fuck() {
+void count() {
     counter++;
     char buffer[20];
     sprintf(buffer, "Counter: %d", counter);
@@ -14,14 +15,18 @@ void fuck() {
 int main(void)
 {
     HelperRegisterWindow("MyWindowClass");
-    HelperCreateWindow("Window Title", 250, 250);
+    HelperCreateWindow("Window Title", 640, 360);
 
-    labelID = HelperCreateLabel("This is a label", 50, 50, 250, 30, NONE);
-    
-    HelperSetUpdateFunction(fuck, 250);
+    HelperSetTextColor(255, 255, 255);
 
-    HelperSetTextColor(0, 255, 0);
+    labelID = HelperCreateLabel("Counter: 0", 50, 50, 250, 20, NONE);
+    labelID2 = HelperCreateLabel("This is some example text ", 50, 80, 223, 20, NONE);
+
     HelperSetElementFontSize(labelID, 24);
+    HelperSetElementFontSize(labelID2, 24);
+
+
+    HelperSetUpdateFunction(count, 1000);
 
     HelperWindowOnTop();
     HelperStartWindow();
