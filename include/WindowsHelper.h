@@ -42,6 +42,8 @@ void HelperSetElementText(int ElementID, const char *Text);
 void HelperSetUpdateFunction(void(*Function)(void), int interval);
 void HelperSetTextColor(int R, int G, int B);
 void HelperSetElementFontSize(int ElementID, int FontSize);
+void HelperSetElementPosition(int ElementID, int x, int y);
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK WindowProcLabel(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 void None(int ElementID); // This function exists if the function pointer should do nothing
 void Update(void); // This function exists as the default update function

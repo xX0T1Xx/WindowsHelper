@@ -72,10 +72,9 @@ void HelperMoveWindow(int x, int y) {
     SetWindowPos(WINDOW_HANDLE, NULL, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 }
 
-// Event Callback Function
+// Event Callback Function For Main Window
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
-
         // The Element Was Clicked
         case WM_COMMAND: {
             FUNCTION_POINTER_ID.at((int)wParam)((int)wParam); // Call the function associated with this element
@@ -89,9 +88,8 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
             
         // Color for STATIC objects
         case WM_CTLCOLORSTATIC: {
-            HDC hdcStatic = (HDC)wParam;
-            SetTextColor(hdcStatic, STATIC_COLOR);
-            SetBkColor(hdcStatic, BACKGROUND_COLOR);
+            SetTextColor((HDC)wParam, STATIC_COLOR);
+            SetBkColor((HDC)wParam, BACKGROUND_COLOR);
             return (LRESULT)STATIC_BRUSH;
         }
 
@@ -111,6 +109,19 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
         }
     }
     return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+// Event Callback Function For Text Labels
+LRESULT CALLBACK WindowProcLabel(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+    switch (message) {
+        case WM_ERASEBKGND: {
+            RECT rect;
+            GetClientRect(hWnd, &rect);
+            FillRect((HDC)wParam, &rect, CreateSolidBrush(BACKGROUND_COLOR));
+            return 1;
+        }
+    }
+    return WindowProc(hWnd, message, wParam, lParam);
 }
 
 // This is the None function, it's required by WindowProc
@@ -189,7 +200,12 @@ void HelperSetTextColor(int R, int G, int B) {
 void HelperSetElementFontSize(int ElementID, int FontSize) {
     LOGFONT lf;
     GetObject(FONT, sizeof(LOGFONT), &lf);
-    lf.lfHeight = 24;
+    lf.lfHeight = FontSize;
     HFONT hNewFont = CreateFontIndirect(&lf);
     SendMessage(ELEMENTS.at(ElementID), WM_SETFONT, (WPARAM)hNewFont, TRUE);
+}
+
+// Moves an element
+void HelperSetElementPosition(int ElementID, int x, int y) {
+    SetWindowPos(ELEMENTS.at(ElementID), NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 }
