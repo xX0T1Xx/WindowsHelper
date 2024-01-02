@@ -1,27 +1,16 @@
 #include "WindowsHelper.h"
 #include <stdio.h>
 
-int labelID;
-int buttonID;
-int counter = 0;
-
-void count() {
-    counter++;
-    char buffer[20];
-    sprintf(buffer, "Counter: %d", counter);
-    HelperSetElementText(labelID, buffer);
-}
-
 int main(void)
 {
     HelperRegisterWindow("MyWindowClass");
-    HelperCreateWindow("Window Title", 640, 360);
+    HelperCreateWindow("Application", 640, 360);
     HelperSetTextColor(255, 255, 255);
 
-    labelID = HelperCreateLabel("Counter: 0", 50, 50, 250, 50, NONE);
-    HelperSetElementFontSize(labelID, 50);
+    int label = HelperCreateLabel("This is a label.", 50, 50, 30, NONE);
 
-    HelperSetUpdateFunction(count, 1000);
+    int button = HelperCreateButton("Button", 100, 100, 250, 50, NONE);
+    HelperSetElementFont(button, 30, "Consolas");
 
     HelperWindowOnTop();
     HelperStartWindow();

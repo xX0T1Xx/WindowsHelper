@@ -148,16 +148,17 @@ int HelperCreateButton(const char *ButtonText, const int x, const int y, const i
 }
 
 // Creates a button and returns it's id
-int HelperCreateLabel(const char *LabelText, const int x, const int y, const int width, const int height, void(*function)(int)) {
+int HelperCreateLabel(const char *LabelText, const int x, const int y, const int fontSize, void(*function)(int)) {
     ID_COUNTER++;
     FUNCTION_POINTER_ID.push_back(function);
     HWND label = CreateWindowA(
         "STATIC", LabelText, // Class + Text
         WS_VISIBLE | WS_CHILD, // Styles
-        x, y, width, height, // Position + Size
+        x, y, strlen(LabelText) * fontSize / 2, fontSize, // Position + Size
         WINDOW_HANDLE, (HMENU)ID_COUNTER, WC.hInstance, NULL // Extra Data
     );
     ELEMENTS.push_back(label);
+    HelperSetElementFont(ID_COUNTER, fontSize, "Consolas");
     return ID_COUNTER;
 }
 
@@ -175,6 +176,19 @@ int HelperCreateTextBox(const int x, const int y, const int width, const int hei
     return ID_COUNTER;
 }
 
+// Creates a generic object
+int HelperCreateGenericElement(char *className, char *text, int styles, int x, int y, int width, int height, void(*function)(int)) {
+    ID_COUNTER++;
+    FUNCTION_POINTER_ID.push_back(function);
+    HWND element = CreateWindowA(
+        className, text, // Class + Text
+        WS_CHILD | WS_VISIBLE | styles, // Styles
+        x, y, width, height, // Position + Size
+        WINDOW_HANDLE, (HMENU)ID_COUNTER, WC.hInstance, NULL // Extra Data
+    );
+    ELEMENTS.push_back(element);
+    return ID_COUNTER;
+}
 
 // ---------------------------------------------------------------------------------------------------------- //
 //                                          ELEMENTS EDITING CODE                                             //
@@ -196,12 +210,14 @@ void HelperSetTextColor(int R, int G, int B) {
     STATIC_COLOR = RGB(R, G, B);
 }
 
-// Sets the font size of a specific text element
-void HelperSetElementFontSize(int ElementID, int FontSize) {
-    LOGFONT lf;
-    GetObject(FONT, sizeof(LOGFONT), &lf);
-    lf.lfHeight = FontSize;
-    HFONT hNewFont = CreateFontIndirect(&lf);
+// Sets the font  of a specific text element
+void HelperSetElementFont(int ElementID, int FontSize, char *FontName) {
+    LOGFONTA lf;
+    GetObject(FONT, sizeof(LOGFONTA), &lf);
+    lf.lfHeight = FontSize; // setting font size
+    lf.lfWidth = FontSize / 2;
+    strcpy(lf.lfFaceName, FontName);
+    HFONT hNewFont = CreateFontIndirectA(&lf);
     SendMessage(ELEMENTS.at(ElementID), WM_SETFONT, (WPARAM)hNewFont, TRUE);
 }
 
